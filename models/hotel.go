@@ -17,6 +17,7 @@ type Hotel struct {
 	IsActive    int8      `orm:"column(is_active)"`
 	Address     string    `orm:"column(address);size(255)"`
 	CityId      *City     `orm:"column(city_id);rel(fk)"`
+	Rating      float32   `orm:"-"`
 	CreatedAt   time.Time `orm:"column(created_at);type(timestamp)"`
 	UpdatedAt   time.Time `orm:"column(updated_at);type(timestamp)"`
 }

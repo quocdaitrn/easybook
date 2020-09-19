@@ -1,10 +1,7 @@
 // @APIVersion 1.0.0
-// @Title beego Test API
-// @Description beego has a very cool tools to autogenerate documents for your API
-// @Contact astaxie@gmail.com
-// @TermsOfServiceUrl http://beego.me/
-// @License Apache 2.0
-// @LicenseUrl http://www.apache.org/licenses/LICENSE-2.0.html
+// @Title Hotel Booking API
+// @Description Autogenerate API documents
+// @Contact daitq.cntt@gmail.com
 package routers
 
 import (
@@ -15,6 +12,14 @@ import (
 
 func init() {
 	ns := beego.NewNamespace("/v1",
+
+		beego.NSNamespace("/rpc",
+			beego.NSNamespace("/hotels",
+				beego.NSInclude(
+					&controllers.BookingController{},
+				),
+			),
+		),
 
 		beego.NSNamespace("/agreements",
 			beego.NSInclude(
