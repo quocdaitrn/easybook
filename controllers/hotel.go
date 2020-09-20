@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"easybook/models"
-	"easybook/services/easybook_chaincode"
 	"encoding/json"
 	"errors"
 	"strconv"
@@ -56,16 +55,12 @@ func (c *HotelController) Post() {
 // @router /:id [get]
 func (c *HotelController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
-	contract, _ := easybook_chaincode.GetContract()
-	result, _ := contract.EvaluateTransaction("ReadHotel", idStr)
-	hotel := &easybook_chaincode.Hotel{}
-	err := json.Unmarshal(result, hotel)
-	//id, _ := strconv.Atoi(idStr)
-	//v, err := models.GetHotelById(id)
+	id, _ := strconv.Atoi(idStr)
+	v, err := models.GetHotelById(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
-		c.Data["json"] = hotel
+		c.Data["json"] = v
 	}
 	c.ServeJSON()
 }

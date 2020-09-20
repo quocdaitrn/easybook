@@ -2,7 +2,10 @@ package controllers
 
 import (
 	"easybook/models"
+	"easybook/services/easybook_chaincode"
+	"encoding/json"
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego"
@@ -75,8 +78,37 @@ func (c *BookingController) Search() {
 	l, err := models.GetAllHotel(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = err.Error()
-	} else {
-		c.Data["json"] = l
+		c.ServeJSON()
+		return
 	}
+
+	contract, err := easybook_chaincode.GetContract()
+	if err != nil {
+		c.Data["json"] = err.Error()
+		c.ServeJSON()
+		return
+	}
+
+	hotels := []*models.Hotel{}
+	for _, h := range l {
+		hotel := h.(models.Hotel)
+		smJsonHotel, err := contract.EvaluateTransaction("ReadHotel", strconv.Itoa(hotel.Id))
+		if err != nil {
+			c.Data["json"] = err.Error()
+			c.ServeJSON()
+			return
+		}
+
+		smHotel := &easybook_chaincode.Hotel{}
+		err = json.Unmarshal(smJsonHotel, smHotel)
+		if err != nil {
+			c.Data["json"] = err.Error()
+			c.ServeJSON()
+			return
+		}
+		hotel.Rating = smHotel.Rating
+		hotels = append(hotels, &hotel)
+	}
+	c.Data["json"] = hotels
 	c.ServeJSON()
 }
