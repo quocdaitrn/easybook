@@ -30,3 +30,6 @@ debug*
 # build file
 easybook
 lastupdate.tmp
+
+# blockchain wallet
+wallet

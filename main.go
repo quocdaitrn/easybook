@@ -2,10 +2,9 @@ package main
 
 import (
 	_ "easybook/routers"
-	"github.com/astaxie/beego/plugins/cors"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/plugins/cors"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -25,4 +24,3 @@ func main() {
 	}))
 	beego.Run()
 }
-
