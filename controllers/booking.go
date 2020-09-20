@@ -5,6 +5,7 @@ import (
 	"easybook/services/easybook_chaincode"
 	"encoding/json"
 	"errors"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -93,22 +94,22 @@ func (c *BookingController) Search() {
 	for _, h := range l {
 		hotel := h.(models.Hotel)
 		smJsonHotel, err := contract.EvaluateTransaction("ReadHotel", strconv.Itoa(hotel.Id))
-		if err != nil {
-			c.Data["json"] = err.Error()
-			c.ServeJSON()
-			return
+		if err == nil {
+			smHotel := &easybook_chaincode.Hotel{}
+			err = json.Unmarshal(smJsonHotel, smHotel)
+			if err != nil {
+				c.Data["json"] = err.Error()
+				c.ServeJSON()
+				return
+			}
+			hotel.Rating = smHotel.Rating
 		}
-
-		smHotel := &easybook_chaincode.Hotel{}
-		err = json.Unmarshal(smJsonHotel, smHotel)
-		if err != nil {
-			c.Data["json"] = err.Error()
-			c.ServeJSON()
-			return
-		}
-		hotel.Rating = smHotel.Rating
 		hotels = append(hotels, &hotel)
 	}
+	// Sort by age, keeping original order or equal elements.
+	sort.SliceStable(hotels, func(i, j int) bool {
+		return hotels[i].Rating < hotels[j].Rating
+	})
 	c.Data["json"] = hotels
 	c.ServeJSON()
 }
