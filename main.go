@@ -1,6 +1,7 @@
 package main
 
 import (
+	"easybook/controllers"
 	_ "easybook/routers"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -22,5 +23,7 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Content-Type"},
 		AllowCredentials: true,
 	}))
+
+	beego.ErrorController(&controllers.ErrorController{})
 	beego.Run()
 }

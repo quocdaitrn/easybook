@@ -19,6 +19,11 @@ func init() {
 					&controllers.BookingController{},
 				),
 			),
+			beego.NSNamespace("/rooms",
+				beego.NSInclude(
+					&controllers.BookingController{},
+				),
+			),
 		),
 
 		beego.NSNamespace("/agreements",

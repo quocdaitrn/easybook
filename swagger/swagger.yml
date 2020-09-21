@@ -284,10 +284,10 @@ paths:
         description: body for Guest content
         required: true
         schema:
-          $ref: '#/definitions/models.Guest'
+          $ref: '#/definitions/codecs.GuestPostRequest'
       responses:
         "201":
-          description: '{int} models.Guest'
+          description: '{int} codecs.GuestPostResponse'
         "403":
           description: body is empty
   /guests/{id}:
@@ -1490,44 +1490,379 @@ paths:
         "403":
           description: id is empty
 definitions:
+  codecs.BookingReserveRoomsRequest:
+    title: BookingReserveRoomsRequest
+    type: object
+    properties:
+      discountPercent:
+        type: number
+        format: float
+      endDate:
+        $ref: '#/definitions/types.Date'
+      guestId:
+        type: integer
+        format: int64
+      rooms:
+        type: array
+        items:
+          type: integer
+          format: int64
+      startDate:
+        $ref: '#/definitions/types.Date'
+      totalPrice:
+        type: number
+        format: float
+  codecs.GuestPostRequest:
+    title: GuestPostRequest
+    type: object
+    properties:
+      address:
+        type: string
+      confirmedPassword:
+        type: string
+      detail:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+        format: int64
+      lastName:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      role:
+        type: integer
+        format: int32
   models.Agreement:
     title: Agreement
     type: object
+    properties:
+      Category:
+        type: integer
+        format: int32
+      Code:
+        type: string
+      CreatedAt:
+        type: string
+        format: datetime
+      Description:
+        type: string
+      Detail:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      IsPenalty:
+        type: integer
+        format: int32
+      ServiceLevelId:
+        $ref: '#/definitions/models.ServiceLevel'
+      UpdatedAt:
+        type: string
+        format: datetime
   models.City:
     title: City
     type: object
+    properties:
+      CreatedAt:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      Name:
+        type: string
+      PostCode:
+        type: integer
+        format: int64
+      UpdatedAt:
+        type: string
+        format: datetime
   models.Guest:
     title: Guest
     type: object
+    properties:
+      Address:
+        type: string
+      CreatedAt:
+        type: string
+        format: datetime
+      Detail:
+        type: string
+      Email:
+        type: string
+      FirstName:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      LastName:
+        type: string
+      Password:
+        type: string
+      Phone:
+        type: string
+      Role:
+        type: integer
+        format: int32
+      UpdatedAt:
+        type: string
+        format: datetime
   models.Hotel:
     title: Hotel
     type: object
+    properties:
+      Address:
+        type: string
+      CityId:
+        $ref: '#/definitions/models.City'
+      CreatedAt:
+        type: string
+        format: datetime
+      Description:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      IsActive:
+        type: integer
+        format: int32
+      Name:
+        type: string
+      Rating:
+        type: number
+        format: float
+      UpdatedAt:
+        type: string
+        format: datetime
   models.Invoice:
     title: Invoice
     type: object
+    properties:
+      Amount:
+        type: number
+        format: float
+      CanceledAt:
+        type: string
+        format: datetime
+      GuestId:
+        $ref: '#/definitions/models.Guest'
+      Id:
+        type: integer
+        format: int64
+      IssuedAt:
+        type: string
+        format: datetime
+      PaidAt:
+        type: string
+        format: datetime
+      ReservationId:
+        $ref: '#/definitions/models.Reservation'
   models.Notification:
     title: Notification
     type: object
+    properties:
+      CreatedAt:
+        type: string
+        format: datetime
+      Description:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      IsCompleted:
+        type: integer
+        format: int32
+      ReservationId:
+        $ref: '#/definitions/models.Reservation'
+      TriggerAt:
+        type: string
+        format: datetime
+      Type:
+        type: string
+      UpdatedAt:
+        type: string
+        format: datetime
   models.PenaltyRule:
     title: PenaltyRule
     type: object
+    properties:
+      AgreementId:
+        $ref: '#/definitions/models.Agreement'
+      CreatedAt:
+        type: string
+        format: datetime
+      DiscountPercent:
+        type: number
+        format: float
+      Id:
+        type: integer
+        format: int64
+      IsUpgradeLevel:
+        type: integer
+        format: int32
+      UpdatedAt:
+        type: string
+        format: datetime
   models.Reservation:
     title: Reservation
     type: object
+    properties:
+      CreatedAt:
+        type: string
+        format: datetime
+      DiscountPercent:
+        type: number
+        format: float
+      EndDate:
+        type: string
+        format: datetime
+      GuestId:
+        $ref: '#/definitions/models.Guest'
+      Id:
+        type: integer
+        format: int64
+      StartDate:
+        type: string
+        format: datetime
+      Status:
+        type: integer
+        format: int32
+      TotalPrice:
+        type: number
+        format: float
+      UpdatedAt:
+        type: string
+        format: datetime
   models.Room:
     title: Room
     type: object
+    properties:
+      CreatedAt:
+        type: string
+        format: datetime
+      CurrentPrice:
+        type: number
+        format: float
+      Description:
+        type: string
+      HotelId:
+        $ref: '#/definitions/models.Hotel'
+      Id:
+        type: integer
+        format: int64
+      Name:
+        type: string
+      Number:
+        type: integer
+        format: int64
+      ServiceLevelId:
+        $ref: '#/definitions/models.ServiceLevel'
+      UpdatedAt:
+        type: string
+        format: datetime
   models.RoomFacilitate:
     title: RoomFacilitate
     type: object
+    properties:
+      Bathroom:
+        type: string
+      Bed:
+        type: string
+      CreatedAt:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      Outdoor:
+        type: string
+      RoomId:
+        $ref: '#/definitions/models.Room'
+      UpdatedAt:
+        type: string
+        format: datetime
+      View:
+        type: string
   models.RoomReserved:
     title: RoomReserved
     type: object
+    properties:
+      CheckIn:
+        type: string
+        format: datetime
+      CheckOut:
+        type: string
+        format: datetime
+      CreatedAt:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      Price:
+        type: number
+        format: float
+      ReservationId:
+        $ref: '#/definitions/models.Reservation'
+      RoomId:
+        $ref: '#/definitions/models.Room'
+      UpdatedAt:
+        type: string
+        format: datetime
   models.ServiceLevel:
     title: ServiceLevel
     type: object
+    properties:
+      CreatedAt:
+        type: string
+        format: datetime
+      EffectFrom:
+        type: string
+        format: datetime
+      ExpireOn:
+        type: string
+        format: datetime
+      HotelId:
+        $ref: '#/definitions/models.Hotel'
+      Id:
+        type: integer
+        format: int64
+      Name:
+        type: string
+      Priority:
+        type: integer
+        format: int32
+      UpdatedAt:
+        type: string
+        format: datetime
   models.StayTracking:
     title: StayTracking
+    type: object
+    properties:
+      AirportShuttle:
+        type: integer
+        format: int32
+      CreatedAt:
+        type: string
+        format: datetime
+      Id:
+        type: integer
+        format: int64
+      ReservationId:
+        $ref: '#/definitions/models.Reservation'
+      RoomNoMapping:
+        type: string
+      UpdatedAt:
+        type: string
+        format: datetime
+  types.Date:
+    title: Date
     type: object
 tags:
 - name: agreements

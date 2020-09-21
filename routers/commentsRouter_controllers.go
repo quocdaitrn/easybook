@@ -54,7 +54,16 @@ func init() {
 
 	beego.GlobalControllerRouter["easybook/controllers:BookingController"] = append(beego.GlobalControllerRouter["easybook/controllers:BookingController"],
 		beego.ControllerComments{
-			Method:           "Search",
+			Method:           "ReserveRooms",
+			Router:           `/reserve`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams:     param.Make(),
+			Filters:          nil,
+			Params:           nil})
+
+	beego.GlobalControllerRouter["easybook/controllers:BookingController"] = append(beego.GlobalControllerRouter["easybook/controllers:BookingController"],
+		beego.ControllerComments{
+			Method:           "SearchHotels",
 			Router:           `/search`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams:     param.Make(),
