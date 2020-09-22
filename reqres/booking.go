@@ -1,4 +1,4 @@
-package codecs
+package reqres
 
 import (
 	"easybook/models"

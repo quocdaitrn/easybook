@@ -16,6 +16,7 @@ type Reservation struct {
 	StartDate       time.Time `orm:"column(start_date);type(date)"`
 	EndDate         time.Time `orm:"column(end_date);type(date)"`
 	DiscountPercent float32   `orm:"column(discount_percent)"`
+	AirportShuttle  uint8     `orm:"column(airport_shuttle)"`
 	TotalPrice      float32   `orm:"column(total_price)"`
 	Status          uint8     `orm:"column(status)"`
 	CreatedAt       time.Time `orm:"column(created_at);type(timestamp)"`

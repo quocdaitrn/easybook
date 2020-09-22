@@ -11,14 +11,15 @@ import (
 )
 
 type RoomReserved struct {
-	Id            int          `orm:"column(id);auto"`
-	ReservationId *Reservation `orm:"column(reservation_id);rel(fk)"`
-	RoomId        *Room        `orm:"column(room_id);rel(fk)"`
-	Price         float32      `orm:"column(price);null"`
-	CheckIn       time.Time    `orm:"column(check_in);type(timestamp);null"`
-	CheckOut      time.Time    `orm:"column(check_out);type(timestamp);null"`
-	CreatedAt     time.Time    `orm:"column(created_at);type(timestamp)"`
-	UpdatedAt     time.Time    `orm:"column(updated_at);type(timestamp)"`
+	Id             int          `orm:"column(id);auto"`
+	ReservationId  *Reservation `orm:"column(reservation_id);rel(fk)"`
+	RoomId         *Room        `orm:"column(room_id);rel(fk)"`
+	AssignedRoomId *int         `orm:"column(assigned_room_id);null"`
+	Price          float32      `orm:"column(price);null"`
+	CheckIn        time.Time    `orm:"column(check_in);type(timestamp);null"`
+	CheckOut       time.Time    `orm:"column(check_out);type(timestamp);null"`
+	CreatedAt      time.Time    `orm:"column(created_at);type(timestamp)"`
+	UpdatedAt      time.Time    `orm:"column(updated_at);type(timestamp)"`
 }
 
 func (t *RoomReserved) TableName() string {

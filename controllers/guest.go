@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"crypto/md5"
-	"easybook/codecs"
 	"easybook/models"
+	"easybook/reqres"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -30,23 +30,23 @@ func (c *GuestController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create Guest
-// @Param	body		body 	codecs.GuestPostRequest	true		"body for Guest content"
-// @Success 201 {int} codecs.GuestPostResponse
+// @Param	body		body 	reqres.GuestPostRequest	true		"body for Guest content"
+// @Success 201 {int} reqres.GuestPostResponse
 // @Failure 403 body is empty
 // @router / [post]
 func (c *GuestController) Post() {
-	res := codecs.GuestPostResponse{}
-	res.SetCode(codecs.Fail)
+	res := reqres.GuestPostResponse{}
+	res.SetCode(reqres.Fail)
 
 	defer func() {
 		c.Data["json"] = res
 		c.ServeJSON()
 	}()
 
-	var req codecs.GuestPostRequest
+	var req reqres.GuestPostRequest
 	if json.Unmarshal(c.Ctx.Input.RequestBody, &req) != nil {
 		c.Ctx.Output.SetStatus(400)
-		res.SetCode(codecs.InvalidParams)
+		res.SetCode(reqres.InvalidParams)
 		return
 	}
 
@@ -68,12 +68,12 @@ func (c *GuestController) Post() {
 	_, err := models.AddGuest(guest)
 	if err != nil {
 		c.Ctx.Output.SetStatus(500)
-		res.SetCode(codecs.FailedCreate)
+		res.SetCode(reqres.FailedCreate)
 		return
 	}
 
 	c.Ctx.Output.SetStatus(201)
-	res.SetCode(codecs.Success)
+	res.SetCode(reqres.Success)
 	res.Guest = guest
 }
 

@@ -26,18 +26,6 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/agreements",
-			beego.NSInclude(
-				&controllers.AgreementController{},
-			),
-		),
-
-		beego.NSNamespace("/cities",
-			beego.NSInclude(
-				&controllers.CityController{},
-			),
-		),
-
 		beego.NSNamespace("/guests",
 			beego.NSInclude(
 				&controllers.GuestController{},
@@ -50,21 +38,9 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/invoices",
-			beego.NSInclude(
-				&controllers.InvoiceController{},
-			),
-		),
-
 		beego.NSNamespace("/notifications",
 			beego.NSInclude(
 				&controllers.NotificationController{},
-			),
-		),
-
-		beego.NSNamespace("/penalty_rules",
-			beego.NSInclude(
-				&controllers.PenaltyRuleController{},
 			),
 		),
 
@@ -77,30 +53,6 @@ func init() {
 		beego.NSNamespace("/rooms",
 			beego.NSInclude(
 				&controllers.RoomController{},
-			),
-		),
-
-		beego.NSNamespace("/room_facilitates",
-			beego.NSInclude(
-				&controllers.RoomFacilitateController{},
-			),
-		),
-
-		beego.NSNamespace("/room_reserveds",
-			beego.NSInclude(
-				&controllers.RoomReservedController{},
-			),
-		),
-
-		beego.NSNamespace("/service_level",
-			beego.NSInclude(
-				&controllers.ServiceLevelController{},
-			),
-		),
-
-		beego.NSNamespace("/stay_tracking",
-			beego.NSInclude(
-				&controllers.StayTrackingController{},
 			),
 		),
 	)

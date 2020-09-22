@@ -1,15 +1,19 @@
 package controllers
 
 import (
-	"easybook/models"
-	"easybook/services/easybook_chaincode"
+	"easybook/reqres"
 	"encoding/json"
 	"errors"
+	"net/http"
 	"sort"
 	"strconv"
 	"strings"
 
+	"easybook/models"
+	"easybook/services/easybook_chaincode"
+
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 )
 
 // BookingController operations for booking process
@@ -19,11 +23,12 @@ type BookingController struct {
 
 // URLMapping ...
 func (c *BookingController) URLMapping() {
-	c.Mapping("Search", c.Search)
+	c.Mapping("SearchHotels", c.SearchHotels)
+	c.Mapping("ReserveRooms", c.ReserveRooms)
 }
 
-// Search ...
-// @Title Search
+// SearchHotels ...
+// @Title Search Hotels
 // @Description search available Hotel
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
@@ -34,7 +39,7 @@ func (c *BookingController) URLMapping() {
 // @Success 200 {object} models.Hotel
 // @Failure 403
 // @router /search [get]
-func (c *BookingController) Search() {
+func (c *BookingController) SearchHotels() {
 	var fields []string
 	var sortby []string
 	var order []string
@@ -106,10 +111,91 @@ func (c *BookingController) Search() {
 		}
 		hotels = append(hotels, &hotel)
 	}
-	// Sort by age, keeping original order or equal elements.
+
 	sort.SliceStable(hotels, func(i, j int) bool {
 		return hotels[i].Rating < hotels[j].Rating
 	})
 	c.Data["json"] = hotels
 	c.ServeJSON()
+}
+
+// ReserveRooms ...
+// @Title Reserve Rooms
+// @Description reserve hotel's rooms
+// @Param	body		body 	reqres.BookingReserveRoomsRequest	true		"body for Reservation content"
+// @Success 201 {int} reqres.BookingReserveRoomsResponse
+// @Failure 403 body is empty
+// @router /reserve [post]
+func (c *BookingController) ReserveRooms() {
+	res := reqres.BookingReserveRoomsResponse{}
+	res.SetCode(reqres.Fail)
+
+	defer func() {
+		c.Data["json"] = res
+		c.ServeJSON()
+	}()
+
+	var req reqres.BookingReserveRoomsRequest
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &req)
+	if err != nil {
+		c.Ctx.Output.SetStatus(http.StatusBadRequest)
+		res.SetCode(reqres.InvalidParams)
+		return
+	}
+
+	guest, err := models.GetGuestById(req.GuestID)
+	if err != nil {
+		c.Ctx.Output.SetStatus(http.StatusNotFound)
+		res.SetCode(reqres.RecordNotExist)
+		return
+	}
+
+	reservation := &models.Reservation{
+		GuestId:         guest,
+		StartDate:       req.StartDate.Time,
+		EndDate:         req.EndDate.Time,
+		DiscountPercent: req.DiscountPercent,
+		TotalPrice:      req.TotalPrice,
+		Status:          0,
+	}
+
+	o := orm.NewOrm()
+	_ = o.Begin()
+	// transaction process
+	reservationID, err := o.Insert(reservation)
+	if err != nil {
+		c.Ctx.Output.SetStatus(http.StatusInternalServerError)
+		res.SetCode(reqres.FailedCreate)
+		_ = o.Rollback()
+		return
+	}
+	re := models.Reservation{Id: int(reservationID)}
+	_ = o.Read(&re)
+	for _, roomID := range req.Rooms {
+		ro := models.Room{Id: roomID}
+		err := o.Read(&ro)
+		if err != nil {
+			c.Ctx.Output.SetStatus(http.StatusInternalServerError)
+			res.SetCode(reqres.FailedCreate)
+			_ = o.Rollback()
+			return
+		}
+		roomReserved := &models.RoomReserved{
+			ReservationId: &re,
+			RoomId:        &ro,
+			Price:         ro.CurrentPrice,
+		}
+		_, err = o.Insert(roomReserved)
+		if err != nil {
+			c.Ctx.Output.SetStatus(http.StatusInternalServerError)
+			res.SetCode(reqres.FailedCreate)
+			_ = o.Rollback()
+			return
+		}
+	}
+	_ = o.Commit()
+
+	c.Ctx.Output.SetStatus(http.StatusCreated)
+	res.SetCode(reqres.Success)
+	res.Reservation = &re
 }
